@@ -1,0 +1,14 @@
+{
+  "name": "anime-cloud-invoice-bot",
+  "version": "1.0.0",
+  "description": "Professional Discord invoice bot for Anime Cloud with PNG and PDF invoices.",
+  "main": "src/index.js",
+  "scripts": {"start": "node src/index.js"},
+  "engines": {"node": ">=18.17.0"},
+  "dependencies": {
+    "discord.js": "^14.21.0",
+    "dotenv": "^16.6.1",
+    "pdfkit": "^0.17.2",
+    "sharp": "^0.34.3"
+  }
+}
