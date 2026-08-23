@@ -1,0 +1,30 @@
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+
+const commands = [
+  new SlashCommandBuilder().setName('help').setDescription('Show Anime Cloud commands'),
+  new SlashCommandBuilder().setName('ping').setDescription('Check bot latency'),
+  new SlashCommandBuilder().setName('plans').setDescription('Show current Anime Cloud plans'),
+  new SlashCommandBuilder().setName('status').setDescription('Show Anime Cloud service status'),
+  new SlashCommandBuilder().setName('profile').setDescription('Show your customer profile'),
+  new SlashCommandBuilder().setName('order').setDescription('Create a hosting order').addStringOption(o=>o.setName('plan').setDescription('Plan name').setRequired(true)).addStringOption(o=>o.setName('note').setDescription('Optional note')),
+  new SlashCommandBuilder().setName('pay').setDescription('Pay an existing order with UPI QR').addStringOption(o=>o.setName('order_id').setDescription('Order ID').setRequired(true)),
+  new SlashCommandBuilder().setName('coupon').setDescription('Redeem a coupon').addStringOption(o=>o.setName('code').setDescription('Coupon code').setRequired(true)),
+  new SlashCommandBuilder().setName('ticket').setDescription('Open a support ticket'),
+  new SlashCommandBuilder().setName('invoice').setDescription('Create a professional PNG + PDF invoice').addStringOption(o=>o.setName('customer').setDescription('Customer name').setRequired(true)).addStringOption(o=>o.setName('items').setDescription('Name=Price, Name=Price').setRequired(true)).addStringOption(o=>o.setName('time').setDescription('Service validity/time').setRequired(true)).addStringOption(o=>o.setName('status').setDescription('Payment status').addChoices({name:'PAID',value:'PAID'},{name:'PENDING',value:'PENDING'})),
+  new SlashCommandBuilder().setName('announcement').setDescription('Send an Anime Cloud announcement').setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild).addStringOption(o=>o.setName('title').setDescription('Announcement title').setRequired(true)).addStringOption(o=>o.setName('message').setDescription('Announcement message').setRequired(true)).addChannelOption(o=>o.setName('channel').setDescription('Target channel').setRequired(true)),
+  new SlashCommandBuilder().setName('panel').setDescription('Create an interactive Anime Cloud panel').setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild).addSubcommand(s=>s.setName('payment').setDescription('Post payment panel')).addSubcommand(s=>s.setName('ticket').setDescription('Post ticket panel')).addSubcommand(s=>s.setName('plans').setDescription('Post plans panel')),
+  new SlashCommandBuilder().setName('welcome').setDescription('Configure welcome system').setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild).addSubcommand(s=>s.setName('setup').setDescription('Set welcome channel').addChannelOption(o=>o.setName('channel').setDescription('Welcome channel').setRequired(true))).addSubcommand(s=>s.setName('disable').setDescription('Disable welcome messages')),
+  new SlashCommandBuilder().setName('warn').setDescription('Warn a member').setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers).addUserOption(o=>o.setName('user').setDescription('Member').setRequired(true)).addStringOption(o=>o.setName('reason').setDescription('Reason').setRequired(true)),
+  new SlashCommandBuilder().setName('purge').setDescription('Delete messages').setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages).addIntegerOption(o=>o.setName('amount').setDescription('1-100').setMinValue(1).setMaxValue(100).setRequired(true)),
+  new SlashCommandBuilder().setName('admin').setDescription('Anime Cloud administration').setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+    .addSubcommand(s=>s.setName('stats').setDescription('View bot statistics'))
+    .addSubcommand(s=>s.setName('broadcast').setDescription('Send a plain broadcast').addStringOption(o=>o.setName('message').setDescription('Message').setRequired(true)))
+    .addSubcommand(s=>s.setName('coupon').setDescription('Create coupon').addStringOption(o=>o.setName('code').setDescription('Coupon code').setRequired(true)).addIntegerOption(o=>o.setName('percent').setDescription('Discount percent').setMinValue(1).setMaxValue(100).setRequired(true)))
+    .addSubcommand(s=>s.setName('plan-add').setDescription('Add a custom plan').addStringOption(o=>o.setName('name').setDescription('Plan name').setRequired(true)).addIntegerOption(o=>o.setName('ram').setDescription('RAM GB').setMinValue(1).setRequired(true)).addIntegerOption(o=>o.setName('storage').setDescription('NVMe GB').setMinValue(1).setRequired(true)).addIntegerOption(o=>o.setName('cpu').setDescription('vCPU').setMinValue(1).setRequired(true)).addIntegerOption(o=>o.setName('price').setDescription('Monthly INR').setMinValue(0).setRequired(true)))
+    .addSubcommand(s=>s.setName('plan-edit').setDescription('Edit a plan').addStringOption(o=>o.setName('name').setDescription('Existing plan').setRequired(true)).addIntegerOption(o=>o.setName('ram').setDescription('RAM GB')).addIntegerOption(o=>o.setName('storage').setDescription('NVMe GB')).addIntegerOption(o=>o.setName('cpu').setDescription('vCPU')).addIntegerOption(o=>o.setName('price').setDescription('Monthly INR')))
+    .addSubcommand(s=>s.setName('plan-delete').setDescription('Delete a plan').addStringOption(o=>o.setName('name').setDescription('Plan name').setRequired(true)))
+    .addSubcommand(s=>s.setName('plan-list').setDescription('List all plans'))
+    .addSubcommand(s=>s.setName('payment').setDescription('Approve/reject a payment').addStringOption(o=>o.setName('payment_id').setDescription('Payment ID').setRequired(true)).addStringOption(o=>o.setName('action').setDescription('Action').setRequired(true).addChoices({name:'APPROVE',value:'approve'},{name:'REJECT',value:'reject'})))
+].map(x=>x.toJSON());
+
+module.exports = commands;
