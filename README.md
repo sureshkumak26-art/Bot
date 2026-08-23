@@ -1,15 +1,19 @@
-# Anime Cloud Invoice Bot
+# ☁️ Anime Cloud Bot
 
-Professional Discord invoice generator for Anime Cloud.
+Production Discord.js v14 bot for Anime Cloud hosting operations, customer support, moderation and professional invoices.
 
 ## Features
-- `/invoice` slash command
-- Customer name, item names, prices and service time
-- Optional uploaded image
-- Generates a polished PNG invoice
-- Generates a matching A4 PDF invoice
-- PAID/PENDING status
-- Automatic invoice number and INR total
+- Slash commands with automatic global registration
+- `/help`, `/ping`, `/plans`, `/status`, `/profile`
+- Hosting order tracking with persistent JSON database
+- Coupon creation and redemption
+- Support ticket creation with close button
+- Moderation: `/warn` and `/purge`
+- Admin tools: statistics, broadcasts and coupon management
+- Professional Anime Cloud PNG + A4 PDF invoice generation
+- Multiple invoice items and INR totals
+- PAID/PENDING invoice status
+- No secrets stored in source code
 
 ## Install
 ```bash
@@ -19,9 +23,26 @@ cp .env.example .env
 npm start
 ```
 
-## Command
+## Main commands
 ```text
-/invoice customer:Customer items:Anime VPS=750, Domain biharepoxyflooring.com=1200 time:30 Days status:PAID
+/help
+/plans
+/status
+/order plan:Starter note:Need VPS
+/coupon code:ANIME26
+/ticket
+/invoice customer:Customer items:Anime VPS=750, Domain=1200 time:30 Days status:PAID
+/warn user:@member reason:Rule violation
+/purge amount:20
+/admin stats
+/admin broadcast message:Maintenance tonight
+/admin coupon code:ANIME26 percent:10
 ```
 
-The bot registers the slash command globally when it starts. Keep the bot token only in `.env` or your hosting provider's secret environment variables; never commit it to GitHub.
+## Required Discord permissions
+Invite the bot with the `bot` and `applications.commands` scopes. For the full feature set, give it permission to manage messages, moderate members, manage channels, view channels and send messages.
+
+Keep `DISCORD_TOKEN` only in `.env` or your hosting provider's secret environment variables. Never commit a real token to GitHub.
+
+## Data
+Runtime data is stored in `data/database.json`. Back up this file if you need to preserve orders, tickets, warnings and coupons.
