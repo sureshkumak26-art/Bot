@@ -1,48 +1,80 @@
-# ☁️ Anime Cloud Bot
+# ☁️ Anime Cloud Bot v3
 
-Production Discord.js v14 bot for Anime Cloud hosting operations, customer support, moderation and professional invoices.
+Professional Discord.js v14 hosting and community automation bot.
 
-## Features
-- Slash commands with automatic global registration
-- `/help`, `/ping`, `/plans`, `/status`, `/profile`
-- Hosting order tracking with persistent JSON database
-- Coupon creation and redemption
-- Support ticket creation with close button
-- Moderation: `/warn` and `/purge`
-- Admin tools: statistics, broadcasts and coupon management
-- Professional Anime Cloud PNG + A4 PDF invoice generation
-- Multiple invoice items and INR totals
-- PAID/PENDING invoice status
-- No secrets stored in source code
+## Included
+- ⚡ Instant guild slash commands
+- 💳 Dynamic UPI QR payment flow with manual transaction verification
+- 📦 Orders linked to customizable VPS plans
+- 🧾 High-level PNG + A4 PDF invoices
+- 🎫 Interactive ticket panel + private support channels
+- 📢 Announcement system
+- 👋 Welcome system
+- 🎟️ Coupon system
+- 🛡️ Warn + purge moderation
+- 📊 Admin statistics
+- ⚙️ Add/edit/delete custom hosting plans
 
-## Install
+## Setup
 ```bash
+cd /root/Bot
 npm install
 cp .env.example .env
-# Put your Discord bot token in .env
+nano .env
+npm run commands
 npm start
 ```
 
-## Main commands
-```text
-/help
-/plans
-/status
-/order plan:Starter note:Need VPS
-/coupon code:ANIME26
-/ticket
-/invoice customer:Customer items:Anime VPS=750, Domain=1200 time:30 Days status:PAID
-/warn user:@member reason:Rule violation
-/purge amount:20
-/admin stats
-/admin broadcast message:Maintenance tonight
-/admin coupon code:ANIME26 percent:10
+### Environment
+```env
+DISCORD_TOKEN=your_bot_token
+CLIENT_ID=your_application_id
+GUILD_ID=your_server_id
+UPI_ID=your-upi-id@bank
+PAYMENT_NAME=Anime Cloud
+PAYMENT_LOG_CHANNEL_ID=your_payment_log_channel_id
+SUPPORT_ROLE_ID=your_support_role_id
 ```
 
-## Required Discord permissions
-Invite the bot with the `bot` and `applications.commands` scopes. For the full feature set, give it permission to manage messages, moderate members, manage channels, view channels and send messages.
+## Payment flow
+1. `/order plan:Starter`
+2. `/pay order_id:ORDER_ID` → dynamic QR for the exact INR amount
+3. Complete the UPI payment
+4. `/pay order_id:ORDER_ID transaction_id:UPI_TRANSACTION_ID`
+5. Staff approves with `/admin payment payment_id:PAY_ID action:approve`
+6. The order becomes PAID and a professional invoice is generated and sent to the customer.
 
-Keep `DISCORD_TOKEN` only in `.env` or your hosting provider's secret environment variables. Never commit a real token to GitHub.
+This is a **UPI QR + manual verification** system; it does not claim automatic bank/payment-provider verification.
 
-## Data
-Runtime data is stored in `data/database.json`. Back up this file if you need to preserve orders, tickets, warnings and coupons.
+## Panels
+```text
+/panel payment
+/panel ticket
+/panel plans
+```
+
+## Welcome
+```text
+/welcome setup channel:#welcome
+/welcome disable
+```
+
+## Announcement
+```text
+/announcement title:Maintenance message:Scheduled maintenance tonight channel:#announcements
+```
+
+## Customize plans
+```text
+/admin plan-add name:Ultra ram:16 storage:200 cpu:8 price:399
+/admin plan-edit name:Ultra price:449
+/admin plan-delete name:Ultra
+/admin plan-list
+```
+
+## Invoice
+```text
+/invoice customer:Customer items:Anime VPS=750,Domain=1200 time:30 Days status:PAID
+```
+
+Never commit a real Discord token or payment credentials to GitHub. Keep them in `.env` or your host's secret environment variables.
