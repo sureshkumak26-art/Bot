@@ -7,6 +7,7 @@ const guildId = process.env.GUILD_ID;
 
 if (!token) throw new Error('DISCORD_TOKEN is missing from .env');
 if (!clientId) throw new Error('CLIENT_ID is missing from .env');
+if (!guildId) throw new Error('GUILD_ID is missing from .env. Instant guild commands require GUILD_ID.');
 
 const commands = [
   new SlashCommandBuilder().setName('help').setDescription('Show Anime Cloud commands'),
@@ -40,13 +41,15 @@ const commands = [
 
 async function refresh(){
   const rest = new REST({version:'10'}).setToken(token);
-  if (guildId) {
-    await rest.put(Routes.applicationGuildCommands(clientId, guildId), {body: commands});
-    console.log(`☁️ Anime Cloud: refreshed ${commands.length} guild commands for ${guildId}`);
-  } else {
-    await rest.put(Routes.applicationCommands(clientId), {body: commands});
-    console.log(`☁️ Anime Cloud: refreshed ${commands.length} global commands`);
+  const route = Routes.applicationGuildCommands(clientId, guildId);
+  const result = await rest.put(route, {body: commands});
+  const registered = await rest.get(route);
+  console.log(`☁️ Anime Cloud: registered ${result.length} guild commands.`);
+  console.log(`☁️ Anime Cloud: Discord reports ${registered.length} commands in guild ${guildId}.`);
+  if (registered.length !== commands.length) {
+    throw new Error(`Verification failed: expected ${commands.length}, Discord returned ${registered.length}. Check CLIENT_ID, GUILD_ID and bot installation.`);
   }
+  console.log(`✅ Instant guild slash commands are active.`);
 }
 
-refresh().catch(error=>{ console.error('❌ Command refresh failed:', error.message); process.exit(1); });
+refresh().catch(error=>{ console.error('❌ Guild command refresh failed:', error.message); process.exit(1); });
