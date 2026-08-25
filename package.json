@@ -1,10 +1,10 @@
 {
   "name": "anime-cloud-bot",
-  "version": "3.0.0",
-  "description": "Anime Cloud premium Discord hosting, payments, tickets, welcome, announcements, plans and invoice bot.",
+  "version": "4.0.0",
+  "description": "Anime Cloud premium Discord hosting, payments, multi-category tickets, transcripts, welcome, announcements, plans and invoices.",
   "main": "src/index.js",
   "scripts": {
-    "start": "node scripts/register-commands.js && node src/index.js",
+    "start": "node scripts/register-commands.js && node -r ./src/ticket-system.js src/index.js",
     "commands": "node scripts/register-commands.js"
   },
   "engines": {"node": ">=18.17.0"},
