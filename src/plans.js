@@ -9,6 +9,7 @@ const PLANS = {
     { id: "ipv4-10", name: "10 IPv4", price: 2000, billing: "month", ipv4: 10 },
     { id: "ipv4-20", name: "20 IPv4", price: 4000, billing: "month", ipv4: 20 }
   ],
+
   minecraft: [
     { id: "mc-dirt", name: "Dirt", price: 20, ram: 2, cpu: 50, storage: 6 },
     { id: "mc-stone", name: "Stone", price: 50, ram: 4, cpu: 100, storage: 8 },
@@ -18,6 +19,7 @@ const PLANS = {
     { id: "mc-netherite", name: "Netherite", price: 399, ram: 32, cpu: 300, storage: 70 },
     { id: "mc-bedrock", name: "Bedrock", price: 499, ram: 48, cpu: 400, storage: 100 }
   ],
+
   vps: [
     { id: "vps-nano", name: "VPS Nano", price: 300, ram: 4, vcpu: 1, storage: 30, ipv4: "Public IPv4" },
     { id: "vps-micro", name: "VPS Micro", price: 450, ram: 8, vcpu: 2, storage: 50, ipv4: "Public IPv4" },
@@ -29,20 +31,89 @@ const PLANS = {
   ]
 };
 
-const CATEGORY_NAMES = { ipv4: "🌐 IPv4 Services", minecraft: "⛏️ Minecraft India", vps: "☁️ Paid VPS" };
-const normalize = v => String(v || "").toLowerCase().trim().replace(/[_\s]+/g, "-");
-const money = v => `₹${Number(v).toLocaleString("en-IN")}`;
-function allPlans() { return Object.entries(PLANS).flatMap(([category, plans]) => plans.map(plan => ({ ...plan, category }))); }
-function categoryPlans(category) { return PLANS[normalize(category)] || []; }
-function findPlan(query) { const q = normalize(query); return allPlans().find(p => p.id === q || normalize(p.name) === q || normalize(p.name).includes(q)) || null; }
-function planLine(p, category) {
-  if (category === "ipv4") return `• **${p.name}** — ${money(p.price)}/month • ${p.ipv4} IPv4`;
-  if (category === "minecraft") return `• **${p.name}** — ${p.ram} GB RAM • ${p.cpu}% CPU • ${p.storage} GB Disk • ${money(p.price)}`;
-  return `• **${p.name}** — ${p.ram} GB RAM • ${p.vcpu} vCPU • ${p.storage} GB NVMe • ${p.ipv4} • ${money(p.price)}/month`;
+const CATEGORY_NAMES = {
+  ipv4: "🌐 IPv4 Services",
+  minecraft: "⛏️ Minecraft India",
+  vps: "☁️ Paid VPS"
+};
+
+const normalize = value => String(value || "")
+  .toLowerCase()
+  .trim()
+  .replace(/[_\s]+/g, "-");
+
+const money = value => `₹${Number(value).toLocaleString("en-IN")}`;
+
+function allPlans() {
+  return Object.entries(PLANS).flatMap(([category, plans]) =>
+    plans.map(plan => ({ ...plan, category }))
+  );
 }
+
+function categoryPlans(category) {
+  return PLANS[normalize(category)] || [];
+}
+
+function findPlan(query) {
+  const q = normalize(query);
+
+  return allPlans().find(plan =>
+    plan.id === q ||
+    normalize(plan.name) === q ||
+    normalize(plan.name).includes(q)
+  ) || null;
+}
+
+function planLine(plan, category) {
+  if (category === "ipv4") {
+    return `• **${plan.name}** — ${money(plan.price)}/month • ${plan.ipv4} IPv4`;
+  }
+
+  if (category === "minecraft") {
+    return `• **${plan.name}** — ${plan.ram} GB RAM • ${plan.cpu}% CPU • ${plan.storage} GB Disk • ${money(plan.price)}`;
+  }
+
+  return `• **${plan.name}** — ${plan.ram} GB RAM • ${plan.vcpu} vCPU • ${plan.storage} GB NVMe • ${plan.ipv4} • ${money(plan.price)}/month`;
+}
+
 function planText(category) {
-  if (category && PLANS[normalize(category)]) { const key = normalize(category); return `**${CATEGORY_NAMES[key]}**\n\n${PLANS[key].map(p => planLine(p, key)).join("\n")}`; }
-  return Object.keys(PLANS).map(key => `**${CATEGORY_NAMES[key]}**\n${PLANS[key].map(p => planLine(p, key)).join("\n")}`).join("\n\n");
+  if (category && PLANS[normalize(category)]) {
+    const key = normalize(category);
+
+    return `**${CATEGORY_NAMES[key]}**\n\n${PLANS[key]
+      .map(plan => planLine(plan, key))
+      .join("\n")}`;
+  }
+
+  return Object.keys(PLANS)
+    .map(key =>
+      `**${CATEGORY_NAMES[key]}**\n${PLANS[key]
+        .map(plan => planLine(plan, key))
+        .join("\n")}`
+    )
+    .join("\n\n");
 }
-function orderDetails(plan) { if (!plan) return null; return { id: plan.id, name: plan.name, category: plan.category, amount: plan.price, billing: plan.billing || "month", description: planLine(plan, plan.category) }; }
-module.exports = { PLANS, CATEGORY_NAMES, allPlans, categoryPlans, findPlan, planText, orderDetails, money };
+
+function orderDetails(plan) {
+  if (!plan) return null;
+
+  return {
+    id: plan.id,
+    name: plan.name,
+    category: plan.category,
+    amount: plan.price,
+    billing: plan.billing || "month",
+    description: planLine(plan, plan.category)
+  };
+}
+
+module.exports = {
+  PLANS,
+  CATEGORY_NAMES,
+  allPlans,
+  categoryPlans,
+  findPlan,
+  planText,
+  orderDetails,
+  money
+};
