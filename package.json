@@ -1,18 +1,9 @@
 {
-  "name": "anime-cloud-bot",
-  "version": "4.0.0",
-  "description": "Anime Cloud premium Discord hosting, payments, multi-category tickets, transcripts, welcome, announcements, plans and invoices.",
-  "main": "src/index.js",
-  "scripts": {
-    "start": "node scripts/register-commands.js && node -r ./src/ticket-system.js src/index.js",
-    "commands": "node scripts/register-commands.js"
-  },
-  "engines": {"node": ">=18.17.0"},
-  "dependencies": {
-    "discord.js": "^14.21.0",
-    "dotenv": "^16.6.1",
-    "pdfkit": "^0.17.2",
-    "qrcode": "^1.5.4",
-    "sharp": "^0.34.3"
-  }
+  "name":"anime-cloud-bot",
+  "version":"5.0.0",
+  "description":"Anime Cloud premium Discord bot with plans, orders, public UPI QR, payments, tickets, transcripts, welcome, announcements and invoices.",
+  "main":"src/index.js",
+  "scripts":{"start":"node scripts/register-commands.js && node src/index.js","commands":"node scripts/register-commands.js","check":"node --check src/index.js && node --check src/commands.js && node --check src/plans.js"},
+  "engines":{"node":">=18.17.0"},
+  "dependencies":{"discord.js":"^14.21.0","dotenv":"^16.6.1","pdfkit":"^0.17.2","qrcode":"^1.5.4","sharp":"^0.34.3"}
 }
