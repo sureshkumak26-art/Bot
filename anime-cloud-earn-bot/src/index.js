@@ -95,7 +95,16 @@ function systemStatusEmbed() {
       {name:'⏱️ Uptime',value:'**' + uptimeText + '**',inline:true},
       {name:'👥 Server',value:'**' + (guild?.name || 'Anime Cloud') + '**\\nMembers: **' + (guild?.memberCount || 'N/A') + '**',inline:true},
       {name:'📊 Earn Users',value:'Verified: **' + verifiedUsers + '**\\nTracked: **' + totalUsers + '**',inline:true},
-      {name:'🟢 Services',value:'Messages • Voice • Daily • Wallet • Withdrawals • Store',inline:false}
+      {name:'🟢 Services',value:'Messages • Voice • Daily • Wallet • Withdrawals • Store',inline:false},
+      {name:'📺 Channels',value:
+        '📊 Status: ' + (cfg.systemStatusChannelId ? '<#'+cfg.systemStatusChannelId+'>' : '⚪ Not configured') +
+        '\\n🚨 Withdraw Alerts: ' + (process.env.WITHDRAW_ALERT_CHANNEL_ID ? '<#'+process.env.WITHDRAW_ALERT_CHANNEL_ID+'>' : '⚪ Not configured') +
+        '\\n🎫 Withdrawal Tickets: ' + (process.env.WITHDRAW_TICKET_CATEGORY_ID ? '<#'+process.env.WITHDRAW_TICKET_CATEGORY_ID+'>' : '⚪ Not configured'),
+        inline:false},
+      {name:'🔐 Bot Permissions',value:
+        (guild ? '🟢 Guild connected' : '🔴 Guild unavailable') +
+        '\\n' + (cfg.systemStatusChannelId ? '🟢 Status channel configured' : '🟠 Status channel not configured'),
+        inline:false}
     )
     .setFooter({text:'Anime Cloud Earn • Auto Status • v1.1.0'})
     .setTimestamp();
