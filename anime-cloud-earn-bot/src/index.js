@@ -99,6 +99,8 @@ const commands = [
   new SlashCommandBuilder().setName('admin-buy-reject').setDescription('Admin: reject purchase')
     .addStringOption(o=>o.setName('id').setDescription('Purchase ID').setRequired(true)),
   new SlashCommandBuilder().setName('admin-withdrawals').setDescription('Admin: list withdrawals'),
+  new SlashCommandBuilder().setName('admin-set-withdraw-ticket-category').setDescription('Admin: set withdrawal ticket category')
+    .addChannelOption(o=>o.setName('category').setDescription('Category for approved withdrawal tickets').setRequired(true)),
   new SlashCommandBuilder().setName('admin-set-withdraw-alerts').setDescription('Admin: set withdrawal alert channel')
     .addChannelOption(o=>o.setName('channel').setDescription('Alert channel').setRequired(true)),
   new SlashCommandBuilder().setName('admin-withdraw-approve').setDescription('Admin: approve withdrawal')
@@ -344,14 +346,43 @@ client.on('interactionCreate', async i=>{
       return i.reply({embeds:[embed('📤 Pending Withdrawals',lines)],ephemeral:true});
     }
 
+    if(i.commandName==='admin-set-withdraw-ticket-category') {
+      if(!isAdmin(i.member)) return i.reply({content:'❌ Admin only.',ephemeral:true});
+      const category=i.options.getChannel('category');
+      if(category.type!==0 && category.type!==4) return i.reply({content:'❌ Select a category channel.',ephemeral:true});
+      return i.reply({content:'Use this in .env:\nWITHDRAW_TICKET_CATEGORY_ID='+category.id+'\nThen restart the bot.',ephemeral:true});
+    }
+
     if(i.commandName==='admin-withdraw-approve'||i.commandName==='admin-withdraw-reject') {
       if(!isAdmin(i.member)) return i.reply({content:'❌ Admin only.',ephemeral:true});
       const w=db.withdrawals.find(x=>x.guildId===i.guild.id&&x.id===i.options.getString('id').trim());
       if(!w) return i.reply({content:'❌ Withdrawal not found.',ephemeral:true});
       if(w.status!=='pending') return i.reply({content:'❌ Withdrawal is already '+w.status+'.',ephemeral:true});
       if(i.commandName==='admin-withdraw-approve') {
-        w.status='approved'; w.approvedBy=i.user.id; w.approvedAt=now(); saveDb();
-        return i.reply({embeds:[embed('✅ Withdrawal Approved','Withdrawal **'+w.id+'** for **₹'+w.amount+'** approved.')]});
+        w.status='approved'; w.approvedBy=i.user.id; w.approvedAt=now();
+
+        let ticketText='Ticket could not be created automatically.';
+        const categoryId=process.env.WITHDRAW_TICKET_CATEGORY_ID;
+        if(categoryId) {
+          try {
+            const channel=await i.guild.channels.create({
+              name:'withdraw-'+w.id.slice(0,8),
+              type:0,
+              parent:categoryId,
+              permissionOverwrites:[
+                {id:i.guild.roles.everyone.id,deny:['ViewChannel']},
+                {id:w.userId,allow:['ViewChannel','SendMessages','ReadMessageHistory']},
+                {id:i.guild.members.me.id,allow:['ViewChannel','SendMessages','ReadMessageHistory','ManageChannels']},
+                {id:i.member.id,allow:['ViewChannel','SendMessages','ReadMessageHistory']}
+              ]
+            });
+            ticketText='<#'+channel.id>';
+            await channel.send({embeds:[embed('💸 Withdrawal Ticket','👤 User: <@'+w.userId+'>\\n💰 Amount: **₹'+w.amount+'**\\n🆔 Request ID: **'+w.id+'**\\n📊 Status: **Approved**\\n\\nPlease process the payout and close this ticket after completion.')]});
+            w.ticketChannelId=channel.id;
+          } catch(e) { console.error('Withdrawal ticket error:',e.message); }
+        }
+        saveDb();
+        return i.reply({embeds:[embed('✅ Withdrawal Approved','Withdrawal **'+w.id+'** for **₹'+w.amount+'** approved.\\n🎫 Ticket: '+ticketText)]});
       }
       const owner=getUser(i.guild.id,w.userId,'');
       owner.wallet=Math.min(cfg.walletMax,owner.wallet+w.amount);
