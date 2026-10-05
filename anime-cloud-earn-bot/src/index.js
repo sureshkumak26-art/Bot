@@ -175,39 +175,52 @@ client.on('interactionCreate', async i=>{
     const u=getUser(i.guild.id,i.user.id,i.user.username);
 
     if(i.commandName==='help') {
+      const isStaff = isAdmin(i.member);
       const helpText =
-        '> **Your central hub for earning points, managing your wallet, redeeming rewards, and accessing the Anime Cloud store.**\\n\\n' +
-        '**💰 EARNING**\\n' +
-        '\`/verify\` — Verify your account & unlock earning\\n' +
-        '\`/points\` — View your available points\\n' +
-        '\`/balance\` — View wallet & points\\n' +
+        '*Earn points • Build balance • Redeem rewards*\\n\\n' +
+        '> Welcome to **Anime Cloud Earn**. Use the commands below to manage your account, earn points, convert your balance, and request withdrawals.\\n\\n' +
+        '**━━━━━━━━━━━━━━━━━━━━━━━━**\\n\\n' +
+        '**💰 EARN**\\n' +
+        '\`/verify\` — Unlock your earning account\\n' +
+        '\`/points\` — Check your current points\\n' +
         '\`/daily\` — Claim your daily reward\\n' +
-        '\`/refer\` — View referral information\\n' +
+        '\`/refer\` — View your referral details\\n' +
         '\`/leaderboard\` — View the top earners\\n\\n' +
-        '**💎 WALLET & REWARDS**\\n' +
-        '\`/rewards\` — View current earning rates\\n' +
-        '\`/convert\` — Convert points to wallet balance\\n' +
-        '\`/withdraw\` — Request a wallet withdrawal\\n' +
-        '\`/history\` — View your transaction history\\n\\n' +
-        '**🛒 ANIME CLOUD STORE**\\n' +
+        '**💳 ACCOUNT**\\n' +
+        '\`/balance\` — View points & wallet balance\\n' +
+        '\`/rewards\` — View earning rates\\n' +
+        '\`/convert\` — Convert points → wallet\\n' +
+        '\`/history\` — View your account history\\n\\n' +
+        '**🛍️ STORE**\\n' +
         '\`/products\` — Browse available products\\n' +
         '\`/buy\` — Create a product purchase request\\n\\n' +
-        '**🛡️ ADMINISTRATION**\\n' +
-        '> Staff-only commands\\n' +
-        '> Product management • Purchase management • Withdrawal management • User balance management\\n\\n' +
-        '**📌 SYSTEM INFORMATION**\\n' +
-        '> 🔐 **Verification:** Required before earning\\n' +
-        '> 💰 **Wallet:** Maximum ₹' + cfg.walletMax.toLocaleString() + '\\n' +
-        '> 🎁 **Daily:** Available every 24 hours\\n' +
-        '> 🛡️ **Security:** Staff-reviewed withdrawals\\n\\n' +
-        '**━━━━━━━━━━━━━━━━━━━━━━━━**\\n' +
-        '🔗 **Anime Cloud Community**\\n' +
+        '**💸 WITHDRAWALS**\\n' +
+        '\`/withdraw\` — Request a wallet withdrawal\\n' +
+        '> Withdrawals are reviewed by the Anime Cloud team before processing.\\n\\n' +
+        '**📊 EARNING SYSTEM**\\n' +
+        '> 💬 **Messages:** +' + cfg.messagePoints + ' point / eligible message\\n' +
+        '> 🎙️ **Voice:** +' + cfg.vcPoints + ' points / ' + cfg.vcMinutes + ' minutes\\n' +
+        '> 🎁 **Daily:** +' + cfg.dailyPoints + ' points / 24 hours\\n' +
+        '> 💎 **Conversion:** ' + cfg.pointsPerRupee + ' points = ₹1\\n' +
+        '> 💰 **Wallet Limit:** ₹' + cfg.walletMax.toLocaleString() +
+        (isStaff ? '\\n\\n**🛡️ ADMINISTRATION**\\n' +
+          '\`/admin-products\` — Manage products\\n' +
+          '\`/admin-purchases\` — Review purchases\\n' +
+          '\`/admin-buy-approve\` — Approve purchases\\n' +
+          '\`/admin-buy-reject\` — Reject purchases\\n' +
+          '\`/admin-withdrawals\` — View withdrawal requests\\n' +
+          '\`/admin-withdraw-approve\` — Approve withdrawal\\n' +
+          '\`/admin-withdraw-reject\` — Reject withdrawal\\n' +
+          '\`/admin-add\` — Add user points\\n' +
+          '\`/admin-remove\` — Remove user points' : '') +
+        '\\n\\n**━━━━━━━━━━━━━━━━━━━━━━━━**\\n\\n' +
+        '🔗 **COMMUNITY**\\n' +
         cfg.invite + '\\n\\n' +
-        '*Anime Cloud • Earn More. Redeem More.*';
+        '*Secure • Transparent • Community Powered*';
       const helpEmbed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setAuthor({name:'Anime Cloud • Earn Center'})
-        .setTitle('📖 Command Center')
+        .setTitle('☁️ Command Center')
         .setDescription(helpText)
         .setFooter({text:'Anime Cloud Earn System • v1.1.0'})
         .setTimestamp();
