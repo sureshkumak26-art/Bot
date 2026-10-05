@@ -175,25 +175,26 @@ client.on('interactionCreate', async i=>{
     const u=getUser(i.guild.id,i.user.id,i.user.username);
 
     if(i.commandName==='help') {
-      return i.reply({embeds:[embed('📖 Anime Cloud Earn Bot — Help',
-        '**💰 Earning**\\n'+
-        '`/verify` — Verify and unlock earning\\n'+
-        '`/points` — View your points\\n'+
-        '`/balance` — View wallet and points\\n'+
-        '`/daily` — Claim daily reward\\n'+
-        '`/refer` — Get referral information\\n'+
-        '`/leaderboard` — View top earners\\n'+
-        '\\n**💱 Rewards**\\n'+
-        '`/rewards` — View earning rates\\n'+
-        '`/convert points:<amount>` — Convert points to wallet\\n'+
-        '`/withdraw amount:<amount>` — Request a withdrawal\\n'+
-        '`/history` — View account history\\n'+
-        '\\n**🛒 Products**\\n'+
-        '`/products` — View available products\\n'+
-        '`/buy product:<name>` — Create a purchase request\\n'+
-        '\\n**🛠️ Admin**\\n'+
-        'Admin-only product, purchase, withdrawal and points management commands are available to authorized staff.\\n'+
-        '\\n🔗 **Anime Cloud:** '+cfg.invite)]})});
+      const helpText =
+        '**💰 Earning**\\n' +
+        '`/verify` — Verify and unlock earning\\n' +
+        '`/points` — View your points\\n' +
+        '`/balance` — View wallet and points\\n' +
+        '`/daily` — Claim daily reward\\n' +
+        '`/refer` — Get referral information\\n' +
+        '`/leaderboard` — View top earners\\n\\n' +
+        '**💱 Rewards**\\n' +
+        '`/rewards` — View earning rates\\n' +
+        '`/convert points:<amount>` — Convert points to wallet\\n' +
+        '`/withdraw amount:<amount>` — Request a withdrawal\\n' +
+        '`/history` — View account history\\n\\n' +
+        '**🛒 Products**\\n' +
+        '`/products` — View available products\\n' +
+        '`/buy product:<name>` — Create a purchase request\\n\\n' +
+        '**🛠️ Admin**\\n' +
+        'Admin-only product, purchase, withdrawal and points management commands are available.\\n\\n' +
+        '🔗 **Anime Cloud:** ' + cfg.invite;
+      return i.reply({embeds:[embed('📖 Anime Cloud Earn Bot — Help',helpText)]});
     }
 
     if(i.commandName==='verify') {
