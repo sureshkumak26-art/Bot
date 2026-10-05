@@ -227,7 +227,7 @@ client.on('interactionCreate', async i=>{
         .setColor(0x5865F2)
         .setAuthor({name:'Anime Cloud • Earn Center'})
         .setTitle('☁️ Command Center')
-        .setDescription(lines.join('\\n'))
+        .setDescription(lines.join('\n'))
         .setFooter({text:'Anime Cloud Earn System • v1.1.0'})
         .setTimestamp();
       return i.reply({embeds:[helpEmbed]});
@@ -240,21 +240,21 @@ client.on('interactionCreate', async i=>{
         if(role) await i.member.roles.add(role).catch(()=>{});
       }
       return i.reply({embeds:[embed('✅ Verification Complete',
-        'You are verified and can earn points.\\n\\n💬 Messages: +' + cfg.messagePoints +
-        ' point per eligible message\\n🎙️ VC: +' + cfg.vcPoints + ' points every ' +
-        cfg.vcMinutes + ' minutes\\n\\n🔗 Anime Cloud: ' + cfg.invite)]});
+        'You are verified and can earn points.\n\n💬 Messages: +' + cfg.messagePoints +
+        ' point per eligible message\n🎙️ VC: +' + cfg.vcPoints + ' points every ' +
+        cfg.vcMinutes + ' minutes\n\n🔗 Anime Cloud: ' + cfg.invite)]});
     }
 
     if(i.commandName==='points')
       return i.reply({embeds:[embed('⭐ Your Points',
-        'Current Points: **'+u.points.toLocaleString()+'**\\nLifetime Points: **'+u.lifetimePoints.toLocaleString()+
-        '**\\nConversion Rate: **'+cfg.pointsPerRupee+' points = ₹1**\\nWallet: **₹'+u.wallet.toLocaleString()+' / ₹'+cfg.walletMax.toLocaleString()+'**')]});
+        'Current Points: **'+u.points.toLocaleString()+'**\nLifetime Points: **'+u.lifetimePoints.toLocaleString()+
+        '**\nConversion Rate: **'+cfg.pointsPerRupee+' points = ₹1**\nWallet: **₹'+u.wallet.toLocaleString()+' / ₹'+cfg.walletMax.toLocaleString()+'**')]});
 
     if(i.commandName==='balance')
       return i.reply({embeds:[embed('💰 Your Balance',
-        '👤 <@'+i.user.id+'>\\n⭐ Points: **'+u.points.toLocaleString()+
-        '**\\n💵 Wallet: **₹'+u.wallet.toLocaleString()+' / ₹'+cfg.walletMax.toLocaleString()+
-        '**\\n🏆 Lifetime points: **'+u.lifetimePoints.toLocaleString()+'**\\n\\n🔗 '+cfg.invite)]});
+        '👤 <@'+i.user.id+'>\n⭐ Points: **'+u.points.toLocaleString()+
+        '**\n💵 Wallet: **₹'+u.wallet.toLocaleString()+' / ₹'+cfg.walletMax.toLocaleString()+
+        '**\n🏆 Lifetime points: **'+u.lifetimePoints.toLocaleString()+'**\n\n🔗 '+cfg.invite)]});
 
     if(i.commandName==='convert') {
       if(!u.verified) return i.reply({content:'❌ Run /verify first.',ephemeral:true});
@@ -271,7 +271,7 @@ client.on('interactionCreate', async i=>{
       u.wallet+=credit;
       touch(u); saveDb();
       return i.reply({embeds:[embed('💱 Points Converted',
-        'Converted **'+spent.toLocaleString()+' points** into **₹'+credit.toLocaleString()+' wallet balance**.\\n\\n⭐ Remaining points: **'+u.points.toLocaleString()+'**\\n💵 Wallet: **₹'+u.wallet.toLocaleString()+' / ₹'+cfg.walletMax.toLocaleString()+'**')]});
+        'Converted **'+spent.toLocaleString()+' points** into **₹'+credit.toLocaleString()+' wallet balance**.\n\n⭐ Remaining points: **'+u.points.toLocaleString()+'**\n💵 Wallet: **₹'+u.wallet.toLocaleString()+' / ₹'+cfg.walletMax.toLocaleString()+'**')]});
     }
 
     if(i.commandName==='daily') {
@@ -284,19 +284,19 @@ client.on('interactionCreate', async i=>{
 
     if(i.commandName==='refer')
       return i.reply({embeds:[embed('🔗 Referral',
-        'Your referral code is:\\n**'+i.user.id+'**\\n\\nReward: **+'+cfg.referralPoints+
-        ' points** per valid referral.\\n\\n'+cfg.invite)]});
+        'Your referral code is:\n**'+i.user.id+'**\n\nReward: **+'+cfg.referralPoints+
+        ' points** per valid referral.\n\n'+cfg.invite)]});
 
     if(i.commandName==='rewards')
       return i.reply({embeds:[embed('🎁 Rewards',
-        '**'+cfg.pointsPerRupee+' points = ₹1 wallet credit**\\n\\nWallet limit: **₹'+
-        cfg.walletMax.toLocaleString()+'**\\nMessage: **+'+cfg.messagePoints+
-        '**\\nVC: **+'+cfg.vcPoints+' / '+cfg.vcMinutes+' min**\\n\\nPoint-to-wallet conversion must be handled by your configured admin/payment workflow.')]});
+        '**'+cfg.pointsPerRupee+' points = ₹1 wallet credit**\n\nWallet limit: **₹'+
+        cfg.walletMax.toLocaleString()+'**\nMessage: **+'+cfg.messagePoints+
+        '**\nVC: **+'+cfg.vcPoints+' / '+cfg.vcMinutes+' min**\n\nPoint-to-wallet conversion must be handled by your configured admin/payment workflow.')]});
 
     if(i.commandName==='leaderboard') {
       const top=db.users.filter(x=>x.guildId===i.guild.id&&x.verified)
         .sort((a,b)=>b.lifetimePoints-a.lifetimePoints).slice(0,10);
-      const lines=top.map((x,n)=>'**'+(n+1)+'.** <@'+x.userId+'> — '+x.lifetimePoints.toLocaleString()+' pts').join('\\n')||'No verified users yet.';
+      const lines=top.map((x,n)=>'**'+(n+1)+'.** <@'+x.userId+'> — '+x.lifetimePoints.toLocaleString()+' pts').join('\n')||'No verified users yet.';
       return i.reply({embeds:[embed('🏆 Leaderboard',lines)]});
     }
 
@@ -320,24 +320,24 @@ client.on('interactionCreate', async i=>{
         }
       }
       return i.reply({embeds:[embed('📤 Withdrawal Requested',
-        'Withdrawal ID: **'+w.id+'**\\nAmount: **₹'+amount+'**\\nStatus: **Pending admin review**')]});
+        'Withdrawal ID: **'+w.id+'**\nAmount: **₹'+amount+'**\nStatus: **Pending admin review**')]});
     }
 
     if(i.commandName==='history') {
       const p=db.purchases.filter(x=>x.guildId===i.guild.id&&x.userId===i.user.id).slice(-5).reverse();
       const w=db.withdrawals.filter(x=>x.guildId===i.guild.id&&x.userId===i.user.id).slice(-5).reverse();
       return i.reply({embeds:[embed('📜 Account History',
-        'Verified: **'+(u.verified?'Yes':'No')+'**\\nPoints: **'+u.points.toLocaleString()+
-        '**\\nWallet: **₹'+u.wallet.toLocaleString()+'**\\nReferrals: **'+u.referrals+
-        '**\\nLifetime points: **'+u.lifetimePoints.toLocaleString()+'**\\n\\n**Purchases**\\n'+
-        (p.map(x=>x.productName+' — '+x.status).join('\\n')||'None')+'\\n\\n**Withdrawals**\\n'+
-        (w.map(x=>'₹'+x.amount+' — '+x.status).join('\\n')||'None'))]});
+        'Verified: **'+(u.verified?'Yes':'No')+'**\nPoints: **'+u.points.toLocaleString()+
+        '**\nWallet: **₹'+u.wallet.toLocaleString()+'**\nReferrals: **'+u.referrals+
+        '**\nLifetime points: **'+u.lifetimePoints.toLocaleString()+'**\n\n**Purchases**\n'+
+        (p.map(x=>x.productName+' — '+x.status).join('\n')||'None')+'\n\n**Withdrawals**\n'+
+        (w.map(x=>'₹'+x.amount+' — '+x.status).join('\n')||'None'))]});
     }
 
     if(i.commandName==='products') {
       const products=db.products.filter(x=>x.guildId===i.guild.id&&x.active).sort((a,b)=>a.price-b.price).slice(0,25);
       const lines=products.map((p,n)=>'**'+(n+1)+'. '+p.name+'** — ₹'+p.price.toLocaleString()+
-        ' → **+'+p.points.toLocaleString()+' points**\\n'+(p.description||'Anime Cloud product')).join('\\n\\n')||'No products are available yet.';
+        ' → **+'+p.points.toLocaleString()+' points**\n'+(p.description||'Anime Cloud product')).join('\n\n')||'No products are available yet.';
       return i.reply({embeds:[embed('🛒 Anime Cloud Products',lines)]});
     }
 
@@ -350,8 +350,8 @@ client.on('interactionCreate', async i=>{
         productName:product.name,price:product.price,points:product.points,status:'pending',createdAt:now(),approvedBy:null};
       db.purchases.push(purchase); saveDb();
       return i.reply({embeds:[embed('🛒 Purchase Created',
-        'Purchase ID: **'+purchase.id+'**\\nProduct: **'+product.name+'**\\nPrice: **₹'+
-        product.price+'**\\nReward: **+'+product.points+' points**\\n\\nStatus: **Pending admin approval**.')]});
+        'Purchase ID: **'+purchase.id+'**\nProduct: **'+product.name+'**\nPrice: **₹'+
+        product.price+'**\nReward: **+'+product.points+' points**\n\nStatus: **Pending admin approval**.')]});
     }
 
     if(i.commandName==='admin-product-add') {
@@ -367,14 +367,14 @@ client.on('interactionCreate', async i=>{
 
     if(i.commandName==='admin-products') {
       if(!isAdmin(i.member)) return i.reply({content:'❌ Admin only.',ephemeral:true});
-      const lines=db.products.filter(x=>x.guildId===i.guild.id).map(p=>'**'+p.id+'** — '+p.name+' — ₹'+p.price+' → +'+p.points+' — '+(p.active?'ACTIVE':'OFF')).join('\\n')||'No products.';
+      const lines=db.products.filter(x=>x.guildId===i.guild.id).map(p=>'**'+p.id+'** — '+p.name+' — ₹'+p.price+' → +'+p.points+' — '+(p.active?'ACTIVE':'OFF')).join('\n')||'No products.';
       return i.reply({embeds:[embed('🛠️ Products',lines)],ephemeral:true});
     }
 
     if(i.commandName==='admin-purchases') {
       if(!isAdmin(i.member)) return i.reply({content:'❌ Admin only.',ephemeral:true});
       const rows=db.purchases.filter(x=>x.guildId===i.guild.id&&x.status==='pending').slice(0,20);
-      const lines=rows.map(p=>'**'+p.id+'**\\n<@'+p.userId+'> — '+p.productName+' — ₹'+p.price+' → +'+p.points).join('\\n\\n')||'No pending purchases.';
+      const lines=rows.map(p=>'**'+p.id+'**\n<@'+p.userId+'> — '+p.productName+' — ₹'+p.price+' → +'+p.points).join('\n\n')||'No pending purchases.';
       return i.reply({embeds:[embed('📋 Pending Purchases',lines)],ephemeral:true});
     }
 
@@ -402,7 +402,7 @@ client.on('interactionCreate', async i=>{
     if(i.commandName==='admin-withdrawals') {
       if(!isAdmin(i.member)) return i.reply({content:'❌ Admin only.',ephemeral:true});
       const rows=db.withdrawals.filter(x=>x.guildId===i.guild.id&&x.status==='pending').slice(0,20);
-      const lines=rows.map(w=>'**'+w.id+'** — <@'+w.userId+'> — ₹'+w.amount).join('\\n')||'No pending withdrawals.';
+      const lines=rows.map(w=>'**'+w.id+'** — <@'+w.userId+'> — ₹'+w.amount).join('\n')||'No pending withdrawals.';
       return i.reply({embeds:[embed('📤 Pending Withdrawals',lines)],ephemeral:true});
     }
 
@@ -437,12 +437,12 @@ client.on('interactionCreate', async i=>{
               ]
             });
             ticketText='<#'+channel.id+'>';
-            await channel.send({embeds:[embed('💸 Withdrawal Ticket','👤 User: <@'+w.userId+'>\\n💰 Amount: **₹'+w.amount+'**\\n🆔 Request ID: **'+w.id+'**\\n📊 Status: **Approved**\\n\\nPlease process the payout and close this ticket after completion.')]});
+            await channel.send({embeds:[embed('💸 Withdrawal Ticket','👤 User: <@'+w.userId+'>\n💰 Amount: **₹'+w.amount+'**\n🆔 Request ID: **'+w.id+'**\n📊 Status: **Approved**\n\nPlease process the payout and close this ticket after completion.')]});
             w.ticketChannelId=channel.id;
           } catch(e) { console.error('Withdrawal ticket error:',e.message); }
         }
         saveDb();
-        return i.reply({embeds:[embed('✅ Withdrawal Approved','Withdrawal **'+w.id+'** for **₹'+w.amount+'** approved.\\n🎫 Ticket: '+ticketText)]});
+        return i.reply({embeds:[embed('✅ Withdrawal Approved','Withdrawal **'+w.id+'** for **₹'+w.amount+'** approved.\n🎫 Ticket: '+ticketText)]});
       }
       const owner=getUser(i.guild.id,w.userId,'');
       owner.wallet=Math.min(cfg.walletMax,owner.wallet+w.amount);
