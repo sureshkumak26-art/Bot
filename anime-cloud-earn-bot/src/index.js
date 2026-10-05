@@ -18,7 +18,8 @@ const cfg = {
   referralPoints: Number(process.env.POINTS_PER_REFERRAL || 50),
   walletMax: Number(process.env.WALLET_MAX || 15000),
   pointsPerRupee: Number(process.env.POINTS_PER_RUPEE || 100),
-  dailyPoints: Number(process.env.DAILY_POINTS || 25)
+  dailyPoints: Number(process.env.DAILY_POINTS || 25),
+  systemStatusChannelId: process.env.SYSTEM_STATUS_CHANNEL_ID || ''
 };
 if (!cfg.token || !cfg.clientId || !cfg.guildId) {
   throw new Error('Missing DISCORD_TOKEN, CLIENT_ID or GUILD_ID in .env');
@@ -70,9 +71,61 @@ function isAdmin(member) {
   return member.permissions.has(PermissionsBitField.Flags.Administrator) ||
     (cfg.adminRole && member.roles.cache.has(cfg.adminRole));
 }
+function systemStatusEmbed() {
+  const ping = client.ws.ping;
+  const pingText = ping >= 0 ? ping + 'ms' : 'N/A';
+  const uptime = Math.floor(process.uptime());
+  const days = Math.floor(uptime / 86400);
+  const hours = Math.floor((uptime % 86400) / 3600);
+  const minutes = Math.floor((uptime % 3600) / 60);
+  const seconds = uptime % 60;
+  const uptimeText = days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's';
+  const guild = client.guilds.cache.get(cfg.guildId);
+  const verifiedUsers = db.users.filter(x => x.guildId === cfg.guildId && x.verified).length;
+  const totalUsers = db.users.filter(x => x.guildId === cfg.guildId).length;
+
+  return new EmbedBuilder()
+    .setColor(0x57F287)
+    .setTitle('🟢 Anime Cloud • System Status')
+    .setDescription('**All core systems are operational.**\\n\\nLive status automatically refreshed by the Anime Cloud Earn Bot.')
+    .addFields(
+      {name:'🤖 Bot',value:'🟢 **ONLINE**\\nLatency: **' + pingText + '**',inline:true},
+      {name:'💾 Database',value:'🟢 **ONLINE**\\nLocal JSON storage',inline:true},
+      {name:'📡 Discord API',value:'🟢 **CONNECTED**',inline:true},
+      {name:'⏱️ Uptime',value:'**' + uptimeText + '**',inline:true},
+      {name:'👥 Server',value:'**' + (guild?.name || 'Anime Cloud') + '**\\nMembers: **' + (guild?.memberCount || 'N/A') + '**',inline:true},
+      {name:'📊 Earn Users',value:'Verified: **' + verifiedUsers + '**\\nTracked: **' + totalUsers + '**',inline:true},
+      {name:'🟢 Services',value:'Messages • Voice • Daily • Wallet • Withdrawals • Store',inline:false}
+    )
+    .setFooter({text:'Anime Cloud Earn • Auto Status • v1.1.0'})
+    .setTimestamp();
+}
+
+async function updateSystemStatus() {
+  if (!cfg.systemStatusChannelId || !client.isReady()) return;
+  try {
+    const channel = await client.channels.fetch(cfg.systemStatusChannelId);
+    if (!channel || !channel.isTextBased()) return;
+    const messages = await channel.messages.fetch({limit: 20});
+    const botMessages = messages.filter(m => m.author.id === client.user.id && m.embeds.some(e => e.title === '🟢 Anime Cloud • System Status'));
+    const latest = botMessages.first();
+    const payload = {embeds:[systemStatusEmbed()]};
+    if (latest) {
+      await latest.edit(payload);
+      for (const extra of botMessages.values()) {
+        if (extra.id !== latest.id) await extra.delete().catch(()=>{});
+      }
+    } else {
+      await channel.send(payload);
+    }
+  } catch (e) {
+    console.error('System status update error:', e.message);
+  }
+}
 
 const commands = [
   new SlashCommandBuilder().setName('help').setDescription('Show Anime Cloud Earn Bot commands'),
+  new SlashCommandBuilder().setName('status').setDescription('Show live Anime Cloud system status'),
   new SlashCommandBuilder().setName('verify').setDescription('Verify yourself and unlock earning'),
   new SlashCommandBuilder().setName('points').setDescription('View your earning points'),
   new SlashCommandBuilder().setName('balance').setDescription('View points and wallet balance'),
@@ -129,6 +182,11 @@ client.once('ready', async ()=>{
     console.log('Local JSON database:', dbFile);
     console.log('Logged in as ' + client.user.tag);
     console.log('Wallet cap: ₹' + cfg.walletMax);
+    if (cfg.systemStatusChannelId) {
+      console.log('System status channel:', cfg.systemStatusChannelId);
+      await updateSystemStatus();
+      setInterval(updateSystemStatus, 5 * 60 * 1000);
+    } else console.log('System status auto-update disabled: SYSTEM_STATUS_CHANNEL_ID is not set.');
   } catch(e) { console.error('Setup error:',e); }
 });
 
@@ -173,6 +231,8 @@ client.on('interactionCreate', async i=>{
   if(!i.isChatInputCommand()) return;
   try {
     const u=getUser(i.guild.id,i.user.id,i.user.username);
+
+    if(i.commandName==='status') return i.reply({embeds:[systemStatusEmbed()]});
 
     if(i.commandName==='help') {
       const lines = [
