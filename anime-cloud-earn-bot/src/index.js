@@ -175,44 +175,59 @@ client.on('interactionCreate', async i=>{
     const u=getUser(i.guild.id,i.user.id,i.user.username);
 
     if(i.commandName==='help') {
-      const helpText =
-        '**☁️ ANIME CLOUD EARN**\\n\\n' +
-        '*Your rewards. Your balance. Your progress.*\\n\\n' +
-        '> Earn points through activity, build your wallet, redeem rewards, and request withdrawals — all from one place.\\n\\n' +
-        '**━━━━━━━━━━━━━━━━━━━━━━**\\n\\n' +
-        '**💰 EARNING**\\n' +
-        '\`/verify\`  Verify & activate your account\\n' +
-        '\`/points\`  View available points\\n' +
-        '\`/daily\`  Claim your daily reward\\n' +
-        '\`/refer\`  View your referral progress\\n' +
-        '\`/leaderboard\`  See the top earners\\n\\n' +
-        '**💳 WALLET**\\n' +
-        '\`/balance\`  View points & wallet\\n' +
-        '\`/convert\`  Convert points into wallet balance\\n' +
-        '\`/history\`  View your account activity\\n' +
-        '\`/rewards\`  View earning rates\\n\\n' +
-        '**🛒 STORE**\\n' +
-        '\`/products\`  Browse available rewards\\n' +
-        '\`/buy\`  Purchase a listed product\\n\\n' +
-        '**💸 WITHDRAW**\\n' +
-        '\`/withdraw\`  Request a wallet payout\\n\\n' +
-        '> Every withdrawal is reviewed by the Anime Cloud team before processing.\\n\\n' +
-        '**📈 CURRENT RATES**\\n\\n' +
-        '> 💬 Messages — +' + cfg.messagePoints + ' point\\n' +
-        '> 🎙️ Voice — +' + cfg.vcPoints + ' points / ' + cfg.vcMinutes + ' min\\n' +
-        '> 🎁 Daily — +' + cfg.dailyPoints + ' points / 24h\\n' +
-        '> 💎 Conversion — ' + cfg.pointsPerRupee + ' points = ₹1\\n' +
-        '> 💰 Wallet limit — ₹' + cfg.walletMax.toLocaleString() + '\\n\\n' +
-        '**━━━━━━━━━━━━━━━━━━━━━━**\\n\\n' +
-        '**🔗 ANIME CLOUD COMMUNITY**\\n' +
-        cfg.invite + '\\n\\n' +
-        '*Earn • Progress • Redeem*\\n\\n' +
-        'Anime Cloud Earn • v1.1.0';
+      const lines = [
+        '**☁️ ANIME CLOUD EARN**',
+        '',
+        '*Your rewards. Your balance. Your progress.*',
+        '',
+        '> Earn points through activity, build your wallet, redeem rewards, and request withdrawals — all from one place.',
+        '',
+        '━━━━━━━━━━━━━━━━━━━━━━',
+        '',
+        '**💰 EARNING**',
+        '`/verify`  —  Verify & activate your account',
+        '`/points`  —  View available points',
+        '`/daily`  —  Claim your daily reward',
+        '`/refer`  —  View your referral progress',
+        '`/leaderboard`  —  See the top earners',
+        '',
+        '**💳 WALLET**',
+        '`/balance`  —  View points & wallet',
+        '`/convert`  —  Convert points into wallet balance',
+        '`/history`  —  View your account activity',
+        '`/rewards`  —  View earning rates',
+        '',
+        '**🛒 STORE**',
+        '`/products`  —  Browse available rewards',
+        '`/buy`  —  Purchase a listed product',
+        '',
+        '**💸 WITHDRAW**',
+        '`/withdraw`  —  Request a wallet payout',
+        '',
+        '> Every withdrawal is reviewed by the Anime Cloud team before processing.',
+        '',
+        '**📈 CURRENT RATES**',
+        '',
+        '> 💬 Messages — **+' + cfg.messagePoints + ' point**',
+        '> 🎙️ Voice — **+' + cfg.vcPoints + ' points / ' + cfg.vcMinutes + ' min**',
+        '> 🎁 Daily — **+' + cfg.dailyPoints + ' points / 24h**',
+        '> 💎 Conversion — **' + cfg.pointsPerRupee + ' points = ₹1**',
+        '> 💰 Wallet limit — **₹' + cfg.walletMax.toLocaleString() + '**',
+        '',
+        '━━━━━━━━━━━━━━━━━━━━━━',
+        '',
+        '**🔗 ANIME CLOUD COMMUNITY**',
+        cfg.invite,
+        '',
+        '*Earn • Progress • Redeem*',
+        '',
+        'Anime Cloud Earn • v1.1.0'
+      ];
       const helpEmbed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setAuthor({name:'Anime Cloud • Earn Center'})
         .setTitle('☁️ Command Center')
-        .setDescription(helpText)
+        .setDescription(lines.join('\\n'))
         .setFooter({text:'Anime Cloud Earn System • v1.1.0'})
         .setTimestamp();
       return i.reply({embeds:[helpEmbed]});
