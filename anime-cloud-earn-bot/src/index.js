@@ -74,6 +74,8 @@ function isAdmin(member) {
 const commands = [
   new SlashCommandBuilder().setName('verify').setDescription('Verify yourself and unlock earning'),
   new SlashCommandBuilder().setName('balance').setDescription('View points and wallet balance'),
+  new SlashCommandBuilder().setName('convert').setDescription('Convert points into wallet balance')
+    .addIntegerOption(o=>o.setName('points').setDescription('Points to convert').setRequired(true).setMinValue(1)),
   new SlashCommandBuilder().setName('daily').setDescription('Claim daily points'),
   new SlashCommandBuilder().setName('refer').setDescription('Get your referral code'),
   new SlashCommandBuilder().setName('leaderboard').setDescription('Show points leaderboard'),
@@ -183,6 +185,24 @@ client.on('interactionCreate', async i=>{
         '👤 <@'+i.user.id+'>\\n⭐ Points: **'+u.points.toLocaleString()+
         '**\\n💵 Wallet: **₹'+u.wallet.toLocaleString()+' / ₹'+cfg.walletMax.toLocaleString()+
         '**\\n🏆 Lifetime points: **'+u.lifetimePoints.toLocaleString()+'**\\n\\n🔗 '+cfg.invite)]});
+
+    if(i.commandName==='convert') {
+      if(!u.verified) return i.reply({content:'❌ Run /verify first.',ephemeral:true});
+      const points=i.options.getInteger('points');
+      if(points>u.points) return i.reply({content:'❌ Insufficient points. You have '+u.points.toLocaleString()+' points.',ephemeral:true});
+      const rupees=Math.floor(points/cfg.pointsPerRupee);
+      if(rupees<1) return i.reply({content:'❌ You need at least '+cfg.pointsPerRupee+' points to convert ₹1.',ephemeral:true});
+      const usablePoints=rupees*cfg.pointsPerRupee;
+      if(u.wallet>=cfg.walletMax) return i.reply({content:'❌ Your wallet is already at the ₹'+cfg.walletMax.toLocaleString()+' limit.',ephemeral:true});
+      const room=cfg.walletMax-u.wallet;
+      const credit=Math.min(rupees,room);
+      const spent=credit*cfg.pointsPerRupee;
+      u.points-=spent;
+      u.wallet+=credit;
+      touch(u); saveDb();
+      return i.reply({embeds:[embed('💱 Points Converted',
+        'Converted **'+spent.toLocaleString()+' points** into **₹'+credit.toLocaleString()+' wallet balance**.\\n\\n⭐ Remaining points: **'+u.points.toLocaleString()+'**\\n💵 Wallet: **₹'+u.wallet.toLocaleString()+' / ₹'+cfg.walletMax.toLocaleString()+'**')]});
+    }
 
     if(i.commandName==='daily') {
       if(!u.verified) return i.reply({content:'❌ Run /verify first.',ephemeral:true});
