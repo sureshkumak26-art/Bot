@@ -175,48 +175,39 @@ client.on('interactionCreate', async i=>{
     const u=getUser(i.guild.id,i.user.id,i.user.username);
 
     if(i.commandName==='help') {
-      const isStaff = isAdmin(i.member);
       const helpText =
-        '*Earn points • Build balance • Redeem rewards*\\n\\n' +
-        '> Welcome to **Anime Cloud Earn**. Use the commands below to manage your account, earn points, convert your balance, and request withdrawals.\\n\\n' +
-        '**━━━━━━━━━━━━━━━━━━━━━━━━**\\n\\n' +
-        '**💰 EARN**\\n' +
-        '\`/verify\` — Unlock your earning account\\n' +
-        '\`/points\` — Check your current points\\n' +
-        '\`/daily\` — Claim your daily reward\\n' +
-        '\`/refer\` — View your referral details\\n' +
-        '\`/leaderboard\` — View the top earners\\n\\n' +
-        '**💳 ACCOUNT**\\n' +
-        '\`/balance\` — View points & wallet balance\\n' +
-        '\`/rewards\` — View earning rates\\n' +
-        '\`/convert\` — Convert points → wallet\\n' +
-        '\`/history\` — View your account history\\n\\n' +
-        '**🛍️ STORE**\\n' +
-        '\`/products\` — Browse available products\\n' +
-        '\`/buy\` — Create a product purchase request\\n\\n' +
-        '**💸 WITHDRAWALS**\\n' +
-        '\`/withdraw\` — Request a wallet withdrawal\\n' +
-        '> Withdrawals are reviewed by the Anime Cloud team before processing.\\n\\n' +
-        '**📊 EARNING SYSTEM**\\n' +
-        '> 💬 **Messages:** +' + cfg.messagePoints + ' point / eligible message\\n' +
-        '> 🎙️ **Voice:** +' + cfg.vcPoints + ' points / ' + cfg.vcMinutes + ' minutes\\n' +
-        '> 🎁 **Daily:** +' + cfg.dailyPoints + ' points / 24 hours\\n' +
-        '> 💎 **Conversion:** ' + cfg.pointsPerRupee + ' points = ₹1\\n' +
-        '> 💰 **Wallet Limit:** ₹' + cfg.walletMax.toLocaleString() +
-        (isStaff ? '\\n\\n**🛡️ ADMINISTRATION**\\n' +
-          '\`/admin-products\` — Manage products\\n' +
-          '\`/admin-purchases\` — Review purchases\\n' +
-          '\`/admin-buy-approve\` — Approve purchases\\n' +
-          '\`/admin-buy-reject\` — Reject purchases\\n' +
-          '\`/admin-withdrawals\` — View withdrawal requests\\n' +
-          '\`/admin-withdraw-approve\` — Approve withdrawal\\n' +
-          '\`/admin-withdraw-reject\` — Reject withdrawal\\n' +
-          '\`/admin-add\` — Add user points\\n' +
-          '\`/admin-remove\` — Remove user points' : '') +
-        '\\n\\n**━━━━━━━━━━━━━━━━━━━━━━━━**\\n\\n' +
-        '🔗 **COMMUNITY**\\n' +
+        '**☁️ ANIME CLOUD EARN**\\n\\n' +
+        '*Your rewards. Your balance. Your progress.*\\n\\n' +
+        '> Earn points through activity, build your wallet, redeem rewards, and request withdrawals — all from one place.\\n\\n' +
+        '**━━━━━━━━━━━━━━━━━━━━━━**\\n\\n' +
+        '**💰 EARNING**\\n' +
+        '\`/verify\`  Verify & activate your account\\n' +
+        '\`/points\`  View available points\\n' +
+        '\`/daily\`  Claim your daily reward\\n' +
+        '\`/refer\`  View your referral progress\\n' +
+        '\`/leaderboard\`  See the top earners\\n\\n' +
+        '**💳 WALLET**\\n' +
+        '\`/balance\`  View points & wallet\\n' +
+        '\`/convert\`  Convert points into wallet balance\\n' +
+        '\`/history\`  View your account activity\\n' +
+        '\`/rewards\`  View earning rates\\n\\n' +
+        '**🛒 STORE**\\n' +
+        '\`/products\`  Browse available rewards\\n' +
+        '\`/buy\`  Purchase a listed product\\n\\n' +
+        '**💸 WITHDRAW**\\n' +
+        '\`/withdraw\`  Request a wallet payout\\n\\n' +
+        '> Every withdrawal is reviewed by the Anime Cloud team before processing.\\n\\n' +
+        '**📈 CURRENT RATES**\\n\\n' +
+        '> 💬 Messages — +' + cfg.messagePoints + ' point\\n' +
+        '> 🎙️ Voice — +' + cfg.vcPoints + ' points / ' + cfg.vcMinutes + ' min\\n' +
+        '> 🎁 Daily — +' + cfg.dailyPoints + ' points / 24h\\n' +
+        '> 💎 Conversion — ' + cfg.pointsPerRupee + ' points = ₹1\\n' +
+        '> 💰 Wallet limit — ₹' + cfg.walletMax.toLocaleString() + '\\n\\n' +
+        '**━━━━━━━━━━━━━━━━━━━━━━**\\n\\n' +
+        '**🔗 ANIME CLOUD COMMUNITY**\\n' +
         cfg.invite + '\\n\\n' +
-        '*Secure • Transparent • Community Powered*';
+        '*Earn • Progress • Redeem*\\n\\n' +
+        'Anime Cloud Earn • v1.1.0';
       const helpEmbed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setAuthor({name:'Anime Cloud • Earn Center'})
