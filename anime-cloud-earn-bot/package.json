@@ -1,10 +1,10 @@
 {
   "name": "anime-cloud-earn-bot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "Anime Cloud Discord points, VC, wallet and verification bot",
+  "description": "Anime Cloud Discord points, VC, wallet and verification bot with local JSON storage",
   "main": "src/index.js",
   "scripts": {"start":"node src/index.js","dev":"node --watch src/index.js"},
   "engines": {"node": ">=20"},
-  "dependencies": {"discord.js":"^14.22.1","dotenv":"^16.6.1","mongoose":"^8.18.0"}
+  "dependencies": {"discord.js":"^14.22.1","dotenv":"^16.6.1"}
 }
