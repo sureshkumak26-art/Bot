@@ -99,7 +99,7 @@ const commands = [
   new SlashCommandBuilder().setName('admin-buy-reject').setDescription('Admin: reject purchase')
     .addStringOption(o=>o.setName('id').setDescription('Purchase ID').setRequired(true)),
   new SlashCommandBuilder().setName('admin-withdrawals').setDescription('Admin: list withdrawals'),
-  new SlashCommandBuilder().setName('admin-set-withdraw-ticket-category').setDescription('Admin: set withdrawal ticket category')
+  new SlashCommandBuilder().setName('admin-set-wd-ticket-category').setDescription('Admin: set withdrawal ticket category')
     .addChannelOption(o=>o.setName('category').setDescription('Category for approved withdrawal tickets').setRequired(true)),
   new SlashCommandBuilder().setName('admin-set-withdraw-alerts').setDescription('Admin: set withdrawal alert channel')
     .addChannelOption(o=>o.setName('channel').setDescription('Alert channel').setRequired(true)),
