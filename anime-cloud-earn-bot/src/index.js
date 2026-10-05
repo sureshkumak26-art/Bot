@@ -376,7 +376,7 @@ client.on('interactionCreate', async i=>{
                 {id:i.member.id,allow:['ViewChannel','SendMessages','ReadMessageHistory']}
               ]
             });
-            ticketText='<#'+channel.id>';
+            ticketText='<#'+channel.id+'>';
             await channel.send({embeds:[embed('💸 Withdrawal Ticket','👤 User: <@'+w.userId+'>\\n💰 Amount: **₹'+w.amount+'**\\n🆔 Request ID: **'+w.id+'**\\n📊 Status: **Approved**\\n\\nPlease process the payout and close this ticket after completion.')]});
             w.ticketChannelId=channel.id;
           } catch(e) { console.error('Withdrawal ticket error:',e.message); }
