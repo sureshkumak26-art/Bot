@@ -72,6 +72,7 @@ function isAdmin(member) {
 }
 
 const commands = [
+  new SlashCommandBuilder().setName('help').setDescription('Show Anime Cloud Earn Bot commands'),
   new SlashCommandBuilder().setName('verify').setDescription('Verify yourself and unlock earning'),
   new SlashCommandBuilder().setName('points').setDescription('View your earning points'),
   new SlashCommandBuilder().setName('balance').setDescription('View points and wallet balance'),
@@ -172,6 +173,28 @@ client.on('interactionCreate', async i=>{
   if(!i.isChatInputCommand()) return;
   try {
     const u=getUser(i.guild.id,i.user.id,i.user.username);
+
+    if(i.commandName==='help') {
+      return i.reply({embeds:[embed('📖 Anime Cloud Earn Bot — Help',
+        '**💰 Earning**\\n'+
+        '`/verify` — Verify and unlock earning\\n'+
+        '`/points` — View your points\\n'+
+        '`/balance` — View wallet and points\\n'+
+        '`/daily` — Claim daily reward\\n'+
+        '`/refer` — Get referral information\\n'+
+        '`/leaderboard` — View top earners\\n'+
+        '\\n**💱 Rewards**\\n'+
+        '`/rewards` — View earning rates\\n'+
+        '`/convert points:<amount>` — Convert points to wallet\\n'+
+        '`/withdraw amount:<amount>` — Request a withdrawal\\n'+
+        '`/history` — View account history\\n'+
+        '\\n**🛒 Products**\\n'+
+        '`/products` — View available products\\n'+
+        '`/buy product:<name>` — Create a purchase request\\n'+
+        '\\n**🛠️ Admin**\\n'+
+        'Admin-only product, purchase, withdrawal and points management commands are available to authorized staff.\\n'+
+        '\\n🔗 **Anime Cloud:** '+cfg.invite)])});
+    }
 
     if(i.commandName==='verify') {
       u.verified=true; touch(u); saveDb();
