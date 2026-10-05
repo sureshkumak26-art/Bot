@@ -176,25 +176,42 @@ client.on('interactionCreate', async i=>{
 
     if(i.commandName==='help') {
       const helpText =
-        '**💰 Earning**\\n' +
-        '`/verify` — Verify and unlock earning\\n' +
-        '`/points` — View your points\\n' +
-        '`/balance` — View wallet and points\\n' +
-        '`/daily` — Claim daily reward\\n' +
-        '`/refer` — Get referral information\\n' +
-        '`/leaderboard` — View top earners\\n\\n' +
-        '**💱 Rewards**\\n' +
-        '`/rewards` — View earning rates\\n' +
-        '`/convert points:<amount>` — Convert points to wallet\\n' +
-        '`/withdraw amount:<amount>` — Request a withdrawal\\n' +
-        '`/history` — View account history\\n\\n' +
-        '**🛒 Products**\\n' +
-        '`/products` — View available products\\n' +
-        '`/buy product:<name>` — Create a purchase request\\n\\n' +
-        '**🛠️ Admin**\\n' +
-        'Admin-only product, purchase, withdrawal and points management commands are available.\\n\\n' +
-        '🔗 **Anime Cloud:** ' + cfg.invite;
-      return i.reply({embeds:[embed('📖 Anime Cloud Earn Bot — Help',helpText)]});
+        '> **Your central hub for earning points, managing your wallet, redeeming rewards, and accessing the Anime Cloud store.**\\n\\n' +
+        '**💰 EARNING**\\n' +
+        '\`/verify\` — Verify your account & unlock earning\\n' +
+        '\`/points\` — View your available points\\n' +
+        '\`/balance\` — View wallet & points\\n' +
+        '\`/daily\` — Claim your daily reward\\n' +
+        '\`/refer\` — View referral information\\n' +
+        '\`/leaderboard\` — View the top earners\\n\\n' +
+        '**💎 WALLET & REWARDS**\\n' +
+        '\`/rewards\` — View current earning rates\\n' +
+        '\`/convert\` — Convert points to wallet balance\\n' +
+        '\`/withdraw\` — Request a wallet withdrawal\\n' +
+        '\`/history\` — View your transaction history\\n\\n' +
+        '**🛒 ANIME CLOUD STORE**\\n' +
+        '\`/products\` — Browse available products\\n' +
+        '\`/buy\` — Create a product purchase request\\n\\n' +
+        '**🛡️ ADMINISTRATION**\\n' +
+        '> Staff-only commands\\n' +
+        '> Product management • Purchase management • Withdrawal management • User balance management\\n\\n' +
+        '**📌 SYSTEM INFORMATION**\\n' +
+        '> 🔐 **Verification:** Required before earning\\n' +
+        '> 💰 **Wallet:** Maximum ₹' + cfg.walletMax.toLocaleString() + '\\n' +
+        '> 🎁 **Daily:** Available every 24 hours\\n' +
+        '> 🛡️ **Security:** Staff-reviewed withdrawals\\n\\n' +
+        '**━━━━━━━━━━━━━━━━━━━━━━━━**\\n' +
+        '🔗 **Anime Cloud Community**\\n' +
+        cfg.invite + '\\n\\n' +
+        '*Anime Cloud • Earn More. Redeem More.*';
+      const helpEmbed = new EmbedBuilder()
+        .setColor(0x5865F2)
+        .setAuthor({name:'Anime Cloud • Earn Center'})
+        .setTitle('📖 Command Center')
+        .setDescription(helpText)
+        .setFooter({text:'Anime Cloud Earn System • v1.1.0'})
+        .setTimestamp();
+      return i.reply({embeds:[helpEmbed]});
     }
 
     if(i.commandName==='verify') {
