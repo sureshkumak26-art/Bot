@@ -193,7 +193,7 @@ client.on('interactionCreate', async i=>{
         '`/buy product:<name>` — Create a purchase request\\n'+
         '\\n**🛠️ Admin**\\n'+
         'Admin-only product, purchase, withdrawal and points management commands are available to authorized staff.\\n'+
-        '\\n🔗 **Anime Cloud:** '+cfg.invite)])});
+        '\\n🔗 **Anime Cloud:** '+cfg.invite)]})});
     }
 
     if(i.commandName==='verify') {
