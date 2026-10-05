@@ -99,6 +99,8 @@ const commands = [
   new SlashCommandBuilder().setName('admin-buy-reject').setDescription('Admin: reject purchase')
     .addStringOption(o=>o.setName('id').setDescription('Purchase ID').setRequired(true)),
   new SlashCommandBuilder().setName('admin-withdrawals').setDescription('Admin: list withdrawals'),
+  new SlashCommandBuilder().setName('admin-set-withdraw-alerts').setDescription('Admin: set withdrawal alert channel')
+    .addChannelOption(o=>o.setName('channel').setDescription('Alert channel').setRequired(true)),
   new SlashCommandBuilder().setName('admin-withdraw-approve').setDescription('Admin: approve withdrawal')
     .addStringOption(o=>o.setName('id').setDescription('Withdrawal ID').setRequired(true)),
   new SlashCommandBuilder().setName('admin-withdraw-reject').setDescription('Admin: reject withdrawal')
@@ -246,6 +248,15 @@ client.on('interactionCreate', async i=>{
       u.wallet-=amount;
       const w={id:makeId(),guildId:i.guild.id,userId:i.user.id,amount,status:'pending',createdAt:now(),approvedBy:null};
       db.withdrawals.push(w); touch(u); saveDb();
+      const alertChannelId = process.env.WITHDRAW_ALERT_CHANNEL_ID;
+      if(alertChannelId) {
+        const alertChannel = i.guild.channels.cache.get(alertChannelId);
+        if(alertChannel && alertChannel.isTextBased()) {
+          await alertChannel.send({embeds:[embed('🚨 Withdrawal Request Received',
+            '👤 User: <@'+i.user.id+'>\n💰 Amount: **₹'+amount+'**\n🆔 Request ID: **'+w.id+'**\n📊 Status: **⏳ Pending Review**\n\n⚠️ Admin action required.')]})
+            .catch(e=>console.error('Withdrawal alert error:',e.message));
+        }
+      }
       return i.reply({embeds:[embed('📤 Withdrawal Requested',
         'Withdrawal ID: **'+w.id+'**\\nAmount: **₹'+amount+'**\\nStatus: **Pending admin review**')]});
     }
@@ -317,6 +328,13 @@ client.on('interactionCreate', async i=>{
       }
       purchase.status='rejected'; purchase.rejectedBy=i.user.id; purchase.rejectedAt=now(); saveDb();
       return i.reply({embeds:[embed('❌ Purchase Rejected','Purchase **'+purchase.id+'** was rejected.')]});
+    }
+
+    if(i.commandName==='admin-set-withdraw-alerts') {
+      if(!isAdmin(i.member)) return i.reply({content:'❌ Admin only.',ephemeral:true});
+      const channel=i.options.getChannel('channel');
+      if(!channel.isTextBased()) return i.reply({content:'❌ Select a text channel.',ephemeral:true});
+      return i.reply({content:'Use this in .env:\nWITHDRAW_ALERT_CHANNEL_ID='+channel.id+'\nThen restart the bot.',ephemeral:true});
     }
 
     if(i.commandName==='admin-withdrawals') {
