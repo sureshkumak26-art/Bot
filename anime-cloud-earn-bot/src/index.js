@@ -73,6 +73,7 @@ function isAdmin(member) {
 
 const commands = [
   new SlashCommandBuilder().setName('verify').setDescription('Verify yourself and unlock earning'),
+  new SlashCommandBuilder().setName('points').setDescription('View your earning points'),
   new SlashCommandBuilder().setName('balance').setDescription('View points and wallet balance'),
   new SlashCommandBuilder().setName('convert').setDescription('Convert points into wallet balance')
     .addIntegerOption(o=>o.setName('points').setDescription('Points to convert').setRequired(true).setMinValue(1)),
@@ -179,6 +180,11 @@ client.on('interactionCreate', async i=>{
         ' point per eligible message\\n🎙️ VC: +' + cfg.vcPoints + ' points every ' +
         cfg.vcMinutes + ' minutes\\n\\n🔗 Anime Cloud: ' + cfg.invite)]});
     }
+
+    if(i.commandName==='points')
+      return i.reply({embeds:[embed('⭐ Your Points',
+        'Current Points: **'+u.points.toLocaleString()+'**\\nLifetime Points: **'+u.lifetimePoints.toLocaleString()+
+        '**\\nConversion Rate: **'+cfg.pointsPerRupee+' points = ₹1**\\nWallet: **₹'+u.wallet.toLocaleString()+' / ₹'+cfg.walletMax.toLocaleString()+'**')]});
 
     if(i.commandName==='balance')
       return i.reply({embeds:[embed('💰 Your Balance',
