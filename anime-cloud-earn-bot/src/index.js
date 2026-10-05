@@ -38,6 +38,11 @@ const commands = [
  new SlashCommandBuilder().setName('rewards').setDescription('See the points-to-wallet conversion'),
  new SlashCommandBuilder().setName('withdraw').setDescription('Request a wallet withdrawal').addIntegerOption(o=>o.setName('amount').setDescription('Amount in INR').setRequired(true).setMinValue(1)),
  new SlashCommandBuilder().setName('history').setDescription('View your account history'),
+ new SlashCommandBuilder().setName('products').setDescription('View products and their points rewards'),
+ new SlashCommandBuilder().setName('buy').setDescription('Buy a product and create a reward request').addStringOption(o=>o.setName('product').setDescription('Product name').setRequired(true)),
+ new SlashCommandBuilder().setName('admin-product-add').setDescription('Admin: add a product').addStringOption(o=>o.setName('name').setDescription('Product name').setRequired(true)).addIntegerOption(o=>o.setName('price').setDescription('Price in INR').setRequired(true).setMinValue(0)).addIntegerOption(o=>o.setName('points').setDescription('Points awarded after approval').setRequired(true).setMinValue(1)).addStringOption(o=>o.setName('description').setDescription('Description')),
+ new SlashCommandBuilder().setName('admin-purchases').setDescription('Admin: list pending purchases'),
+ new SlashCommandBuilder().setName('admin-buy-approve').setDescription('Admin: approve purchase and award points').addStringOption(o=>o.setName('id').setDescription('Purchase ID').setRequired(true)),
  new SlashCommandBuilder().setName('admin-add').setDescription('Admin: add points').addUserOption(o=>o.setName('user').setDescription('User').setRequired(true)).addIntegerOption(o=>o.setName('points').setDescription('Points').setRequired(true).setMinValue(1)),
  new SlashCommandBuilder().setName('admin-remove').setDescription('Admin: remove points').addUserOption(o=>o.setName('user').setDescription('User').setRequired(true)).addIntegerOption(o=>o.setName('points').setDescription('Points').setRequired(true).setMinValue(1))
 ].map(c=>c.toJSON());
@@ -175,6 +180,20 @@ Status: **Pending admin review**
 
 ⚠️ Your balance was reserved for this request. Contact Anime Cloud staff if needed.`)]});
     }
+    if(i.commandName==='products'){
+      const products=await Product.find({guildId:i.guild.id,active:true}).sort({price:1}).limit(25);
+      if(!products.length) return i.reply({embeds:[embed('🛒 Products','No products are available yet.')]});
+      const lines=products.map((p,n)=>`**${n+1}. ${p.name}** — ₹${p.price.toLocaleString()} → **+${p.points.toLocaleString()} points**\n${p.description||'Anime Cloud product'}`).join('\n\n');
+      return i.reply({embeds:[embed('🛒 Anime Cloud Products',lines)]});
+    }
+    if(i.commandName==='buy'){
+      if(!u.verified) return i.reply({content:'❌ Run `/verify` first.',ephemeral:true});
+      const name=i.options.getString('product').trim();
+      const product=await Product.findOne({guildId:i.guild.id,active:true,name});
+      if(!product) return i.reply({content:'❌ Product not found. Use `/products` to see available products.',ephemeral:true});
+      const purchase=await Purchase.create({guildId:i.guild.id,userId:i.user.id,productId:String(product._id),productName:product.name,price:product.price,points:product.points});
+      return i.reply({embeds:[embed('🛒 Purchase Created',`Product: **${product.name}**\nPrice: **₹${product.price.toLocaleString()}**\nReward: **+${product.points.toLocaleString()} points**\nPurchase ID: **${purchase._id}**\n\n**Status:** Pending admin approval. Points are awarded only after staff confirms the purchase.`)]});
+    }
     if(i.commandName==='history')
       return i.reply({embeds:[embed('📜 Account',
         `Verified: **${u.verified?'Yes':'No'}**
@@ -182,6 +201,31 @@ Points: **${u.points}**
 Wallet: **₹${u.wallet}**
 Referrals: **${u.referrals}**
 Lifetime points: **${u.lifetimePoints}`)]});
+    if(i.commandName==='admin-product-add'){
+      if(!isAdmin(i.member)) return i.reply({content:'❌ Admin only.',ephemeral:true});
+      const name=i.options.getString('name').trim(), price=i.options.getInteger('price'), points=i.options.getInteger('points'), description=i.options.getString('description')||'';
+      const existing=await Product.findOne({guildId:i.guild.id,name});
+      if(existing) return i.reply({content:'❌ A product with that name already exists.',ephemeral:true});
+      const p=await Product.create({guildId:i.guild.id,name,price,points,description,active:true});
+      return i.reply({content:`✅ Product created: **${p.name}** — ₹${p.price} → +${p.points} points.`});
+    }
+    if(i.commandName==='admin-purchases'){
+      if(!isAdmin(i.member)) return i.reply({content:'❌ Admin only.',ephemeral:true});
+      const pending=await Purchase.find({guildId:i.guild.id,status:'pending'}).sort({createdAt:1}).limit(10);
+      const lines=pending.map(p=>`**${p._id}** — <@${p.userId}> — ${p.productName} — ₹${p.price} → +${p.points}`).join('\n')||'No pending purchases.';
+      return i.reply({embeds:[embed('📋 Pending Purchases',lines)],ephemeral:true});
+    }
+    if(i.commandName==='admin-buy-approve'){
+      if(!isAdmin(i.member)) return i.reply({content:'❌ Admin only.',ephemeral:true});
+      const id=i.options.getString('id').trim();
+      const purchase=await Purchase.findOne({_id:id,guildId:i.guild.id});
+      if(!purchase) return i.reply({content:'❌ Purchase not found.',ephemeral:true});
+      if(purchase.status!=='pending') return i.reply({content:`❌ Purchase is already **${purchase.status}**.`,ephemeral:true});
+      const buyer=await getUser(i.guild.id,purchase.userId,'');
+      buyer.points+=purchase.points; buyer.lifetimePoints+=purchase.points; await buyer.save();
+      purchase.status='approved'; purchase.approvedBy=i.user.id; await purchase.save();
+      return i.reply({embeds:[embed('✅ Purchase Approved',`<@${purchase.userId}> received **+${purchase.points.toLocaleString()} points** for **${purchase.productName}**.`)]});
+    }
     if(['admin-add','admin-remove'].includes(i.commandName)){
       if(!isAdmin(i.member)) return i.reply({content:'❌ Admin only.',ephemeral:true});
       const target=i.options.getUser('user');
